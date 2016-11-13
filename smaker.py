@@ -19,10 +19,10 @@ import os
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
-token = "183048032:AAFgtluPu1tFpIbNDG0ZI0bNB6_J_VbdkU4"
+sudo = 122774063 #SUDO-ID
+token = "BOT-TOKEN" #TOKEN
 bot = telebot.TeleBot(token)
 R = redis.StrictRedis(host='localhost', port=6379, db=0)
-logchat = -104648241
 @bot.message_handler(commands=['start'])
 def start(m):
     try:
@@ -31,18 +31,18 @@ def start(m):
         if not R.get("type:{}".format(m.chat.id)) :
             R.set("type:{}".format(m.chat.id),"circlepro")
     except Exception as e:
-        bot.send_message(logchat,e)
+        bot.send_message(sudo,e)
 @bot.message_handler(commands=['users'])
 def usrs(m):
     try :
-        if m.chat.id == logchat :
+        if m.chat.id == sudo :
             usrs = R.scard("our:users")
-            bot.send_message(logchat,"*Bot Users :* {}".format(usrs),parse_mode="Markdown")
+            bot.send_message(sudo,"*Bot Users :* {}".format(usrs),parse_mode="Markdown")
     except Exception as e:
-        bot.send_message(logchat,e)
+        bot.send_message(sudo,e)
 @bot.message_handler(commands=['sendall'])
 def sendall(m):
-    if m.chat.id == logchat :
+    if m.chat.id == sudo :
         text = m.text.replace('/sendall ','')
         ids = R.smembers("our:users")
         for id in ids:
@@ -52,7 +52,7 @@ def sendall(m):
                 R.srem("our:users",id)
 @bot.message_handler(commands=['fwdtoall'])
 def fwdall(m):
-    if m.chat.id == logchat :
+    if m.chat.id == sudo :
         if m.reply_to_message:
             mid = m.reply_to_message.message_id
             ids = R.smembers("our:users")
@@ -104,8 +104,8 @@ def all(m):
             link = "http://iteam.imgix.net/{}.png?{}".format(typ,text2)
             urllib.urlretrieve(link, "SMaker.png")
             file = open('SMaker.png', 'rb')
-            bot.send_document(m.chat.id,file,caption="By @SMaker_bot")
+            bot.send_document(m.chat.id,file)
     except Exception as e:
-        bot.send_message(logchat,e)
+        bot.send_message(sudo,e)
 bot.polling(True)
 #end
